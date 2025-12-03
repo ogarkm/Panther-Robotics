@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
-import org.firstinspires.ftc.teamcode.subsystems.TransferSys;
 import org.firstinspires.ftc.teamcode.teleOp.Constants;
 
 public class hwMap {

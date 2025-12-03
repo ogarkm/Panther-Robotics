@@ -3,16 +3,14 @@ package org.firstinspires.ftc.teamcode.Hware;
 import static org.firstinspires.ftc.teamcode.teleOp.Constants.DriveConstants;
 import static org.firstinspires.ftc.teamcode.teleOp.Constants.TransferConstants;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
-import android.graphics.Color;
 
 
 public class hwMapExt {

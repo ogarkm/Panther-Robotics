@@ -18,13 +18,13 @@ public class Lift {
         LOCK,
         IDLE
     }
-    private Lift.LiftState currentState = Lift.LiftState.IDLE;
+    private LiftState currentState = LiftState.IDLE;
     public Lift(hwMap.LiftHwMap h_liftHwMap, hwMap.DriveHwMap h_driveHwMap) {
         this.h_lift = h_liftHwMap;
         this.h_driveTrain = h_driveHwMap;
     }
 
-    public void setLiftState(Lift.LiftState state) {
+    public void setLiftState(LiftState state) {
         this.currentState = state;
 
         switch (state) {

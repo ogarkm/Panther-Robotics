@@ -11,10 +11,12 @@ package org.firstinspires.ftc.teamcode.teleOp_test;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Hware.hwMap;
+
 @TeleOp(name="Mecanum_Strafe_Test", group="TEST")
 public class BasicTeleOP extends LinearOpMode {
 
-    hwMap hw = new hwMap(hardwareMap);
+    hwMap.DriveHwMap hw = new hwMap.DriveHwMap(hardwareMap);
 
     @Override
     public void runOpMode() throws InterruptedException {

@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+
 import org.firstinspires.ftc.teamcode.Hware.hwMap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 public class TransferSys {
     private final hwMap.TransferHwMap hardware;
 
