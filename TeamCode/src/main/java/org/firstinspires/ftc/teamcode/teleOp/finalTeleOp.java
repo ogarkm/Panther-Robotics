@@ -9,6 +9,9 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 // TODO - SET THE ALLIANCE SIDE
 @TeleOp(name="FinalTeleOp", group="FINAL")
 public class finalTeleOp extends LinearOpMode {
+    private int alliance;
+
+
 
     private StateMachine stateMachine;
 
@@ -16,6 +19,7 @@ public class finalTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        alliance = 1;
         hwMap.LiftHwMap h_lift = new hwMap.LiftHwMap(hardwareMap);
         hwMap.DriveHwMap h_driveTrain = new hwMap.DriveHwMap(hardwareMap);
         hwMap.IntakeHwMap h_intake = new hwMap.IntakeHwMap(hardwareMap);
@@ -23,6 +27,7 @@ public class finalTeleOp extends LinearOpMode {
         hwMap.TurretHwMap h_turret = new hwMap.TurretHwMap(hardwareMap);
 
         stateMachine = new StateMachine(h_lift, h_driveTrain, h_intake, h_transfer, h_turret);
+        stateMachine.getTurret().setAlliance(alliance);
 
         waitForStart();
         stateMachine.setRobotState(RobotState.TELEOP);
@@ -88,7 +93,14 @@ public class finalTeleOp extends LinearOpMode {
                 stateMachine.emergencyStop();
             }
             if(gamepad1.start){
-                stateMachine.setGameState(GameState.LIFTING);
+                if (alliance == 1) {
+                    alliance ++;
+                    stateMachine.getTurret().setAlliance(alliance);
+                }
+                else {
+                    alliance --;
+                    stateMachine.getTurret().setAlliance(alliance);
+                }
             }
 
             stateMachine.update();
@@ -96,6 +108,7 @@ public class finalTeleOp extends LinearOpMode {
             // Telemetry
             telemetry.addData("Robot State", stateMachine.getCurrentRobotState());
             telemetry.addData("Drive State", stateMachine.getDriveTrain().getDriveState());
+            telemetry.addData("Alliance",  alliance == 1 ? "Blue" : "Red");
             telemetry.update();
         }
 
