@@ -10,6 +10,19 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.teleOp.Constants;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import com.qualcomm.robotcore.util.Range;
+
+
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.List;
+
 import org.firstinspires.ftc.teamcode.teleOp.Constants;
 
 public class hwMap {
@@ -138,6 +151,7 @@ public class hwMap {
         public NormalizedColorSensor indexB;
         public NormalizedColorSensor indexC;
 
+        // Class fields
         public Servo[] lifts;
         public NormalizedColorSensor[] sensors;
 
@@ -150,8 +164,8 @@ public class hwMap {
             indexB = hardwareMap.get(NormalizedColorSensor.class, Constants.TransferConstants.INDEX_SENSOR_B);
             indexC = hardwareMap.get(NormalizedColorSensor.class, Constants.TransferConstants.INDEX_SENSOR_C);
 
-            NormalizedColorSensor[] sensors = { indexA, indexB, indexC };
-            Servo[] lifts = {flickA, flickB, flickC};
+            this.sensors = new NormalizedColorSensor[]{ indexA, indexB, indexC };
+            this.lifts = new Servo[]{flickA, flickB, flickC};
 
             for (NormalizedColorSensor sensor : sensors) {
                 if (sensor instanceof SwitchableLight) {
@@ -160,50 +174,103 @@ public class hwMap {
             }
         }
 
-        public void checkFlickPos() {
-            for (Servo servo : lifts) {
-                if (servo.getPosition() == Constants.TransferConstants.FLICK_POS_UP) {
-                    servo.setPosition(Constants.TransferConstants.FLICK_POS_DOWN);
-                }
-            }
-        }
-
         public void setTransferPos(int index, boolean up) { // index takes 1, 2, 3
-
+            if(index < 1 || index > 3) return;
             lifts[index - 1].setPosition(
                     up ? Constants.TransferConstants.FLICK_POS_UP : Constants.TransferConstants.FLICK_POS_DOWN
             );
         }
 
-
         public int detectArtifactColor(int index) {
-            // Read color
+            if(index < 1 || index > 3) return 0;
             NormalizedRGBA colors = sensors[index-1].getNormalizedColors();
 
-            // Convert to HSV
             float[] hsv = new float[3];
             Color.colorToHSV(colors.toColor(), hsv);
-
             float hue = hsv[0];
             float sat = hsv[1];
             float val = hsv[2];
-            if (sat < 0.2 || val < 0.1) {
-                return 0; // unable to view
-            }
 
-            // PURPLE RANGE
-            if (hue > 260 && hue < 300) {
-                return 1;
-            }
+            if (sat < 0.2 || val < 0.1) return 0;
+            if (hue > 260 && hue < 300) return 1; // Purple
+            if (hue > 80 && hue < 160) return 2;  // Green
 
-            // GREEN RANGE
-            if (hue > 80 && hue < 160) {
-                return 2;
-            }
+            return 0;
+        }
+    }
 
-            return 0; // could be error, or could be no artifact... *sigh*
+    public static class TurretHwMap {
+
+        private static final boolean USE_WEBCAM = true;
+        public AprilTagProcessor aprilTag;
+        public VisionPortal visionPortal;
+
+
+        public DcMotor turretLeftMotor;
+        public DcMotor turretRightMotor;
+
+        public Servo turretservo;
+        public Servo hoodservo;
+
+        public TurretHwMap(HardwareMap hardwareMap) {
+            turretLeftMotor = hardwareMap.dcMotor.get(Constants.TurretConstants.TURRET_LEFT_MOTOR);
+            turretRightMotor = hardwareMap.dcMotor.get(Constants.TurretConstants.TURRET_RIGHT_MOTOR);
+
+            turretLeftMotor.setDirection(Constants.TurretConstants.TURRET_MOTOR_DIRECTION);
+            turretRightMotor.setDirection(Constants.TurretConstants.TURRET_MOTOR_DIRECTION);
+
+            turretservo = hardwareMap.servo.get(Constants.TurretConstants.LEFT_TURRET_SERVO);
+            hoodservo = hardwareMap.servo.get(Constants.TurretConstants.HOOD_TURRET_SERVO);
+
+            initAprilTag(hardwareMap);
         }
 
+        public void setTurretPower(double power) {
+            turretLeftMotor.setPower(power);
+            turretRightMotor.setPower(power);
+        }
+
+        public void turretOff() {
+            turretLeftMotor.setPower(0);
+            turretRightMotor.setPower(0);
+        }
+
+        public void setHoodPos(double pos) {
+            hoodservo.setPosition(pos);
+        }
+
+        public void setTurretPos(double pos) {
+            hoodservo.setPosition(pos);
+        }
+
+        public AprilTagDetection getAprilTagById(int targetTagId) {
+            List<AprilTagDetection> detections = aprilTag.getDetections();
+
+            for (AprilTagDetection detection : detections) {
+                if (detection.metadata != null && detection.id == targetTagId) {
+                    return detection;
+                }
+            }
+
+            return null;  // Not found
+        }
+
+
+
+
+        public void initAprilTag(HardwareMap hardwareMap) {
+            // Create the AprilTag processor.
+            aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
+            // Create the vision portal.
+            if (USE_WEBCAM) {
+                visionPortal = VisionPortal.easyCreateWithDefaults(
+                        hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+            } else {
+                visionPortal = VisionPortal.easyCreateWithDefaults(
+                        BuiltinCameraDirection.BACK, aprilTag);
+            }
+        }
     }
 
 }

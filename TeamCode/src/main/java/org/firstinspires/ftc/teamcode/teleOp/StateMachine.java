@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TransferSys;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
 enum RobotState {
     INIT,
@@ -31,13 +32,15 @@ public class StateMachine {
     private final Lift m_lift;
 
     private final TransferSys m_transfer;
+    private final Turret m_turret;
 
 
-    public StateMachine(hwMap.LiftHwMap h_lift, hwMap.DriveHwMap h_driveTrain, hwMap.IntakeHwMap h_intake, hwMap.TransferHwMap h_transfer) {
+    public StateMachine(hwMap.LiftHwMap h_lift, hwMap.DriveHwMap h_driveTrain, hwMap.IntakeHwMap h_intake, hwMap.TransferHwMap h_transfer, hwMap.TurretHwMap h_turret) {
         this.m_driveTrain = new DriveTrain(h_driveTrain);
         this.m_intake = new Intake(h_intake);
         this.m_lift = new Lift(h_lift, h_driveTrain);
         this.m_transfer = new TransferSys(h_transfer);
+        this.m_turret = new Turret(h_turret);
 
         setRobotState(RobotState.INIT);
         setGameState(GameState.IDLE);
@@ -68,8 +71,14 @@ public class StateMachine {
                 break;
             case SCORING:
                 m_transfer.setTransferState(TransferSys.TransferState.STOP);
+                m_turret.setTurretState(Turret.TurretState.IDLE);
                 break;
         }
+    }
+
+    public void update() {
+        m_transfer.update();
+        m_turret.update();
     }
 
     private void handleGameStateEntry(GameState newState) {
@@ -97,11 +106,13 @@ public class StateMachine {
                 break;
         }
     }
+
     private void handleRobotStateExit(RobotState oldState) {
         switch (oldState) {
             case TELEOP:
                 m_driveTrain.stop();
                 break;
+
             case ESTOP:
                 break;
         }
@@ -134,17 +145,29 @@ public class StateMachine {
                 break;
         }
     }
+
     public void emergencyStop() {
         setRobotState(RobotState.ESTOP);
         setGameState(GameState.IDLE);
     }
+
     public DriveTrain getDriveTrain() {
         return m_driveTrain;
     }
-    public Intake getIntake() {                            
+
+    public Intake getIntake() {
         return m_intake;
     }
+    public Turret getTurret() {
+        return m_turret;
+    }
+
     public RobotState getCurrentRobotState() {
         return currentRobotState;
     }
+
+    public GameState getCurrentGameState() {
+        return currentGameState;
+    }
+
 }

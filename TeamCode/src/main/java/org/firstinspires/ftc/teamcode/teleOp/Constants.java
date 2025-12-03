@@ -85,6 +85,41 @@ public class Constants {
         public static final double FLICK_POS_DOWN = 30; // with POS 0 at the top, with cw rotation
 
     }
+
+    public static class TurretConstants {
+        public static final double SERVO_MIN = 0.0;
+        public static final double SERVO_MAX = 1.0;
+
+        public static final double MANUAL_TURRET_SPEED_DEG = 1.0;
+
+        public static final double TURRET_POWER_MID = 0.7;
+        public static final double TURRET_POWER_MAX = 0.58;
+        public static final double TURRET_POWER_LOW = 0.37;
+
+        public static final double SERVO_TO_TURRET_GEAR_RATIO = 3.5;
+        public static final double TURRET_HOME_ANGLE = 0.0; // Home pos in deg (forward)
+
+        public static final double TURN_GAIN = 0.02;
+
+        public static final double EXTAKE_POWER = 0.3;
+
+
+        public static final String LEFT_TURRET_SERVO = "turretservo";
+
+        public static final String HOOD_TURRET_SERVO = "hoodservo";
+
+
+        public static final String TURRET_RIGHT_MOTOR = "rturret";
+        public static final String TURRET_LEFT_MOTOR = "lturret";
+
+        public static final double kP = 0.02;
+        public static final double kI = 0.00005;
+        public static final double kD = 0.0015;
+        public static final DcMotorSimple.Direction TURRET_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+
+    }
+
+
     // Controller Constants
 //    public static class ControllerConstants {
 //        // Controller deadzones

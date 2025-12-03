@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import org.firstinspires.ftc.teamcode.Hware.hwMap;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 public class TransferSys {
     private final hwMap.TransferHwMap hardware;
-
     private final int[] artifactColors = {0, 0, 0};
     private int[] motif = {2, 1, 1};
+
+    private long flickTimer = 0;
+    private static final int FLICK_DURATION_MS = 300;
+    private List<Integer> currentFlickPlan = new ArrayList<>();
+    private int currentFlickIndex = 0;
+
     public enum TransferState {
         INDEXING,
         FLICKING,
@@ -22,42 +27,9 @@ public class TransferSys {
         this.hardware = hardware;
     }
 
-
-    public void stopTransfer() {
-        if (currentState != TransferState.STOP) {
-            setTransferState(TransferState.STOP);
-        }
-    }
-
-    public void indexAllArtifacts() {
-        for (int i = 1; i <= 3; i++) {
-            int color = hardware.detectArtifactColor(i);
-            artifactColors[i - 1] = color;
-        }
-    }
-
-    public int[] getArtifactColors() {
-        return Arrays.copyOf(artifactColors, artifactColors.length);
-    }
-
-    public void setArtifactColorManual(int index, int color) {
-        if (index < 1 || index > 3) return;
-        artifactColors[index - 1] = color;
-    }
-
-    public void setMotif(int[] newMotif) {
-        if (newMotif == null || newMotif.length != 3) {
-            throw new IllegalArgumentException("Motif must be length 3");
-        }
-        this.motif = Arrays.copyOf(newMotif, 3);
-    }
-
-    public int[] getMotif() {
-        return Arrays.copyOf(motif, motif.length);
-    }
-
-
     public void setTransferState(TransferState state) {
+        if(this.currentState == state && state == TransferState.FLICKING) return;
+
         this.currentState = state;
 
         switch (state) {
@@ -65,34 +37,70 @@ public class TransferSys {
                 indexAllArtifacts();
                 resetAllFlickers();
                 break;
-
             case FLICKING:
-                flickAll();
+                startFlickSequence(); // Start the non-blocking sequence
                 break;
-
             case IDLING:
-                resetAllFlickers();
-                break;
-
             case STOP:
                 resetAllFlickers();
                 break;
         }
     }
 
-    private void flickArtifact(int slot) {
-        hardware.setTransferPos(slot, true);
-    }
-
-    public void resetFlicker(int slot) {
-        hardware.setTransferPos(slot, false);
-    }
-
-    public void resetAllFlickers() {
-        for (int i = 1; i <= 3; i++) {
-            resetFlicker(i);
+    public void update() {
+        if (currentState == TransferState.FLICKING) {
+            processFlickSequence();
         }
     }
+
+    private void startFlickSequence() {
+        indexAllArtifacts();
+        currentFlickPlan = buildFlickPlan();
+
+        if (currentFlickPlan.isEmpty()) {
+            setTransferState(TransferState.IDLING);
+            return;
+        }
+
+        currentFlickIndex = 0;
+        liftCurrentItem();
+    }
+
+    private void processFlickSequence() {
+        if (System.currentTimeMillis() - flickTimer > FLICK_DURATION_MS) {
+
+            dropCurrentItem();
+
+            if (currentFlickIndex < currentFlickPlan.size()) {
+                int slot = currentFlickPlan.get(currentFlickIndex);
+                artifactColors[slot - 1] = 0;
+            }
+
+            currentFlickIndex++;
+
+            if (currentFlickIndex < currentFlickPlan.size()) {
+                liftCurrentItem(); // Lifts next one immediately as previous drops
+            } else {
+                // Done
+                setTransferState(TransferState.IDLING);
+            }
+        }
+    }
+
+    private void liftCurrentItem() {
+        int slot = currentFlickPlan.get(currentFlickIndex);
+        hardware.setTransferPos(slot, true); // UP
+        flickTimer = System.currentTimeMillis();
+    }
+
+    private void dropCurrentItem() {
+        if (currentFlickIndex < currentFlickPlan.size()) {
+            int slot = currentFlickPlan.get(currentFlickIndex);
+            hardware.setTransferPos(slot, false); // DOWN
+        }
+    }
+
+    // --- Helpers ---
 
     public List<Integer> buildFlickPlan() {
         List<Integer> plan = new ArrayList<>(3);
@@ -100,7 +108,7 @@ public class TransferSys {
 
         for (int desiredColor : motif) {
             for (int slot = 0; slot < 3; slot++) {
-                if (!used[slot] && artifactColors[slot] == desiredColor) {
+                if (!used[slot] && artifactColors[slot] != 0 && artifactColors[slot] == desiredColor) {
                     plan.add(slot + 1);
                     used[slot] = true;
                     break;
@@ -108,34 +116,27 @@ public class TransferSys {
             }
         }
 
+        // 2. Remaining Trash
         for (int slot = 0; slot < 3; slot++) {
-            if (!used[slot]) {
+            if (!used[slot] && artifactColors[slot] != 0) {
                 plan.add(slot + 1);
             }
         }
-
         return plan;
     }
 
-
-    public void flickAll() {
-        indexAllArtifacts();
-
-        List<Integer> plan = buildFlickPlan();
-
-        for (int slotIndex : plan) {
-            int color = artifactColors[slotIndex - 1];
-            if (color == 0) continue;
-
-
-            flickArtifact(slotIndex);
-
-            artifactColors[slotIndex - 1] = 0;
+    public void resetAllFlickers() {
+        for (int i = 1; i <= 3; i++) {
+            hardware.setTransferPos(i, false);
         }
     }
 
-    public TransferState getTransferState() {
-        return currentState;
+    public void indexAllArtifacts() {
+        for (int i = 1; i <= 3; i++) {
+            artifactColors[i - 1] = hardware.detectArtifactColor(i);
+        }
     }
 
+    public TransferState getTransferState() { return currentState; }
+    public void setMotif(int[] newMotif) { this.motif = Arrays.copyOf(newMotif, 3); }
 }
