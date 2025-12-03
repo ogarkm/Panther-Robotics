@@ -45,18 +45,18 @@ public class hwMap {
         }
 
     }
-    public static class LiftHwMap {
-        public Servo ptoLeft;
-        public Servo ptoRight;
-        public LiftHwMap(HardwareMap hardwareMap) {
-            ptoLeft = hardwareMap.servo.get(Constants.LiftConstants.PTO_LEFT);
-            ptoRight = hardwareMap.servo.get(Constants.LiftConstants.PTO_RIGHT);
+    // public static class LiftHwMap {
+     //   public Servo ptoLeft;
+       // public Servo ptoRight;
+        //public LiftHwMap(HardwareMap hardwareMap) {
+           // ptoLeft = hardwareMap.servo.get(Constants.LiftConstants.PTO_LEFT);
+           // ptoRight = hardwareMap.servo.get(Constants.LiftConstants.PTO_RIGHT);
 
-            ptoRight.setDirection(Constants.LiftConstants.CW);
-            ptoLeft.setDirection(Constants.LiftConstants.CCW);
-        }
+           // ptoRight.setDirection(Constants.LiftConstants.CW);
+         //   ptoLeft.setDirection(Constants.LiftConstants.CCW);
+        // }
 
-    }
+    // }
     public static class DriveHwMap {
         public DcMotor frontLeftMotor;
         public DcMotor backLeftMotor;

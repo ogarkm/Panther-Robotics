@@ -20,13 +20,13 @@ public class finalTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         alliance = 1;
-        hwMap.LiftHwMap h_lift = new hwMap.LiftHwMap(hardwareMap);
+        // hwMap.LiftHwMap h_lift = new hwMap.LiftHwMap(hardwareMap);
         hwMap.DriveHwMap h_driveTrain = new hwMap.DriveHwMap(hardwareMap);
         hwMap.IntakeHwMap h_intake = new hwMap.IntakeHwMap(hardwareMap);
         hwMap.TransferHwMap h_transfer = new hwMap.TransferHwMap(hardwareMap);
         hwMap.TurretHwMap h_turret = new hwMap.TurretHwMap(hardwareMap);
 
-        stateMachine = new StateMachine(h_lift, h_driveTrain, h_intake, h_transfer, h_turret);
+        stateMachine = new StateMachine(h_driveTrain, h_intake, h_transfer, h_turret);
         stateMachine.getTurret().setAlliance(alliance);
 
         waitForStart();

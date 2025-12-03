@@ -65,7 +65,8 @@ public class Turret {
     }
 
     private void resetTurret() {
-        // TODO - Reset Whatever
+        hardware.setTurretPos(Constants.TurretConstants.TURRET_HOME_ANGLE);
+        setTurretState(TurretState.IDLE);
     }
 
     public void setTurretState(TurretState state) {

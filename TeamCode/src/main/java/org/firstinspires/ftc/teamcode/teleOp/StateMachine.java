@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleOp;
 
 import org.firstinspires.ftc.teamcode.Hware.hwMap;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TransferSys;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -29,16 +28,16 @@ public class StateMachine {
     private GameState currentGameState = GameState.IDLE;
     private final DriveTrain m_driveTrain;
     private final Intake m_intake;
-    private final Lift m_lift;
+    // private final Lift m_lift;
 
     private final TransferSys m_transfer;
     private final Turret m_turret;
 
 
-    public StateMachine(hwMap.LiftHwMap h_lift, hwMap.DriveHwMap h_driveTrain, hwMap.IntakeHwMap h_intake, hwMap.TransferHwMap h_transfer, hwMap.TurretHwMap h_turret) {
+    public StateMachine(hwMap.DriveHwMap h_driveTrain, hwMap.IntakeHwMap h_intake, hwMap.TransferHwMap h_transfer, hwMap.TurretHwMap h_turret) {
         this.m_driveTrain = new DriveTrain(h_driveTrain);
         this.m_intake = new Intake(h_intake);
-        this.m_lift = new Lift(h_lift, h_driveTrain);
+        // this.m_lift = new Lift(h_lift, h_driveTrain);
         this.m_transfer = new TransferSys(h_transfer);
         this.m_turret = new Turret(h_turret);
 
@@ -64,7 +63,7 @@ public class StateMachine {
 
     private void handleGameStateExit(GameState oldState) {
         m_intake.setIntakeState(Intake.IntakeState.IDLE);
-        m_lift.setLiftState(Lift.LiftState.IDLE);
+        // m_lift.setLiftState(Lift.LiftState.IDLE);
         switch (oldState) {
             case INTAKING:
                 m_transfer.setTransferState(TransferSys.TransferState.INDEXING);
@@ -123,7 +122,7 @@ public class StateMachine {
             case TELEOP:
                 m_driveTrain.setDriveState(DriveTrain.DriveState.NORMAL);
                 m_intake.setIntakeState(Intake.IntakeState.IDLE);
-                m_lift.setLiftState(Lift.LiftState.LIFT_DOWN);
+                // m_lift.setLiftState(Lift.LiftState.LIFT_DOWN);
                 break;
             case ESTOP:
                 m_driveTrain.setDriveState(DriveTrain.DriveState.STOP);
