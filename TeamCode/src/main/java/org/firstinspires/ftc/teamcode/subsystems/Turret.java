@@ -13,20 +13,15 @@ public class Turret {
 
     private int[] apriltags = {20, 24};
 
-    // Updated PID and System Constants from reference
-    private static final double SERVO_MIN = 0.0;
-    private static final double SERVO_MAX = 1.0;
-    private static final double MAX_TURRET_DEG = 250;
-    private static final double SERVO_RANGE_DEG = 300;
-
-    private static final double KP = 0.015;
+    // PID Constants for CR Servo rotation
+    private static final double KP = 0.025;
     private static final double KI = 0.0001;
-    private static final double KD = 0.0015;
+    private static final double KD = 0.002;
 
-    private static final double MAX_PID_OUTPUT = 5;
-    private static final double DEADZONE = 1.2;
+    private static final double MAX_ROTATION_POWER = 0.7;
+    private static final double DEADZONE = 2.0; // Degrees
+    private static final double MIN_POWER = 0.12; // Minimum to overcome friction
 
-    private double turretAngleDeg = 0;
     private double integral = 0;
     private double lastError = 0;
 
@@ -36,7 +31,8 @@ public class Turret {
         LAUNCH,
         IDLE,
         EXTAKE,
-        RESET
+        TRACKING,
+        MANUAL
     }
     private TurretState currentState = TurretState.IDLE;
 
@@ -54,6 +50,7 @@ public class Turret {
             setTurretState(TurretState.IDLE);
         }
         hardware.turretOff();
+        hardware.stopTurretRotation();
     }
 
     public void launchTurret() {
@@ -62,11 +59,6 @@ public class Turret {
 
     public void setLaunchPower(double power) {
         this.turretPower = power;
-    }
-
-    private void resetTurret() {
-        hardware.setTurretPos(Constants.TurretConstants.TURRET_HOME_ANGLE);
-        setTurretState(TurretState.IDLE);
     }
 
     public void setTurretState(TurretState state) {
@@ -78,13 +70,17 @@ public class Turret {
                 break;
             case IDLE:
                 hardware.turretOff();
+                hardware.stopTurretRotation();
+                resetPID();
                 break;
             case EXTAKE:
                 hardware.setTurretPower(Constants.TurretConstants.EXTAKE_POWER);
                 break;
-            case RESET:
-                resetTurret();
-                hardware.turretOff();
+            case TRACKING:
+                // Tracking happens in update()
+                break;
+            case MANUAL:
+                // Manual control in update()
                 break;
         }
     }
@@ -93,9 +89,22 @@ public class Turret {
         return currentState;
     }
 
-    // --- New Tracking Logic ---
-
+    // Call this every loop in your main TeleOp
     public void update() {
+        if (currentState == TurretState.TRACKING) {
+            trackAprilTag();
+        }
+    }
+
+    // Manual rotation control (for testing or teleop override)
+    public void manualRotate(double joystickInput) {
+        // joystickInput should be -1.0 to 1.0 from right stick X
+        double power = joystickInput * MAX_ROTATION_POWER;
+        hardware.setTurretRotationPower(power);
+        resetPID(); // Reset PID when manually controlling
+    }
+
+    private void trackAprilTag() {
         AprilTagDetection tag = hardware.getAprilTagById(apriltags[alliance - 1]);
 
         double dt = loopTimer.seconds();
@@ -103,51 +112,66 @@ public class Turret {
         if (dt <= 0) dt = 0.01;
 
         if (tag == null) {
-            holdPosition();
+            // No target - hold position
+            hardware.stopTurretRotation();
             return;
         }
 
         double yawDeg = tag.ftcPose.yaw;
 
-        yawDeg = lowPass(yawDeg, 0.3);
+        // Apply low-pass filter for smoothing
+        yawDeg = lowPassFilter(yawDeg, 0.3);
 
         double error = yawDeg;
 
-        if (Math.abs(error) < DEADZONE) error = 0;
+        // If within deadzone, stop
+        if (Math.abs(error) < DEADZONE) {
+            hardware.stopTurretRotation();
+            resetPID();
+            return;
+        }
 
+        // PID calculation
         integral += error * dt;
+        // Anti-windup: limit integral
+        integral = clamp(integral, -10, 10);
+
         double derivative = (error - lastError) / dt;
         lastError = error;
 
-        double pid = KP * error + KI * integral + KD * derivative;
-        pid = clamp(pid, -MAX_PID_OUTPUT, MAX_PID_OUTPUT);
+        double pidOutput = KP * error + KI * integral + KD * derivative;
 
-        turretAngleDeg += pid;
-        if (Math.abs(turretAngleDeg) > MAX_TURRET_DEG) {
-            if (turretAngleDeg > 0) turretAngleDeg -= 360;
-            else turretAngleDeg += 360;
+        // Add minimum power to overcome static friction
+        if (Math.abs(pidOutput) > 0.01) {
+            pidOutput = pidOutput + Math.copySign(MIN_POWER, pidOutput);
         }
 
-        setServoToAngle(turretAngleDeg);
+        pidOutput = clamp(pidOutput, -MAX_ROTATION_POWER, MAX_ROTATION_POWER);
+
+        // Negative because we want to reduce error (turn toward target)
+        hardware.setTurretRotationPower(-pidOutput);
     }
 
-    private void setServoToAngle(double angleDeg) {
-        double normalized = angleDeg / SERVO_RANGE_DEG;
-        while (normalized < 0) normalized += 1;
-        while (normalized > 1) normalized -= 1;
-        normalized = clamp(normalized, SERVO_MIN, SERVO_MAX);
-        hardware.setTurretPos(normalized);
+    private void resetPID() {
+        integral = 0;
+        lastError = 0;
     }
 
-    private void holdPosition() {
-        setServoToAngle(turretAngleDeg);
-    }
-
-    private double lowPass(double input, double factor) {
+    private double lowPassFilter(double input, double factor) {
+        // Blend new input with previous error for smoothing
         return (factor * input) + (1 - factor) * lastError;
     }
 
     private double clamp(double v, double min, double max) {
         return Math.max(min, Math.min(max, v));
+    }
+
+    public void setHoodPos(double pos) {
+        hardware.setHoodPos(pos);
+    }
+
+    // Getters for telemetry
+    public double getLastError() {
+        return lastError;
     }
 }

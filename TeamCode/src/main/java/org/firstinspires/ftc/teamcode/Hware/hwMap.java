@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.teleOp.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import com.qualcomm.robotcore.hardware.configuration.annotations.ServoTypes;
 import com.qualcomm.robotcore.util.Range;
 
 
@@ -213,7 +215,7 @@ public class hwMap {
         public DcMotor turretLeftMotor;
         public DcMotor turretRightMotor;
 
-        public Servo turretservo;
+        public CRServo turretservo;
         public Servo hoodservo;
 
         public TurretHwMap(HardwareMap hardwareMap) {
@@ -223,7 +225,7 @@ public class hwMap {
             turretLeftMotor.setDirection(Constants.TurretConstants.TURRET_MOTOR_DIRECTION);
             turretRightMotor.setDirection(Constants.TurretConstants.TURRET_MOTOR_DIRECTION);
 
-            turretservo = hardwareMap.servo.get(Constants.TurretConstants.LEFT_TURRET_SERVO);
+            turretservo = hardwareMap.crservo.get(Constants.TurretConstants.LEFT_TURRET_SERVO);
             hoodservo = hardwareMap.servo.get(Constants.TurretConstants.HOOD_TURRET_SERVO);
 
             initAprilTag(hardwareMap);
@@ -243,10 +245,13 @@ public class hwMap {
             hoodservo.setPosition(pos);
         }
 
-        public void setTurretPos(double pos) {
-            hoodservo.setPosition(pos);
+        public void setTurretRotationPower(double power) {
+            turretservo.setPower(power);
         }
 
+        public void stopTurretRotation() {
+            turretservo.setPower(0);
+        }
         public AprilTagDetection getAprilTagById(int targetTagId) {
             List<AprilTagDetection> detections = aprilTag.getDetections();
 

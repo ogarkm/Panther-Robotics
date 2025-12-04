@@ -103,12 +103,20 @@ public class finalTeleOp extends LinearOpMode {
                 }
             }
 
+            if (gamepad2.right_bumper) {
+                stateMachine.getTurret().setHoodPos(0.3); // Close shot
+            } else if (gamepad2.left_bumper) {
+                stateMachine.getTurret().setHoodPos(0.7); // Far shot
+            }
+
             stateMachine.update();
 
             // Telemetry
             telemetry.addData("Robot State", stateMachine.getCurrentRobotState());
             telemetry.addData("Game State", stateMachine.getCurrentGameState());
             telemetry.addData("Drive State", stateMachine.getDriveTrain().getDriveState());
+            telemetry.addData("Transfer State", stateMachine.getTransfer().getTransferState());
+            telemetry.addData("Flick Plan", stateMachine.getTransfer().buildFlickPlan().toString());
             telemetry.addData("Alliance",  alliance == 1 ? "Blue" : "Red");
             telemetry.update();
         }

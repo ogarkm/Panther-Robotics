@@ -81,12 +81,30 @@ public class Constants {
 
 
         // Lift Constants - TODO TUNE THESE PLS
-        public static final double FLICK_POS_UP = 160; // with POS 0 at the top, with cw rotation
-        public static final double FLICK_POS_DOWN = 30; // with POS 0 at the top, with cw rotation
+        public static final double FLICK_POS_UP = 1; // with POS 0 at the top, with cw rotation
+        public static final double FLICK_POS_DOWN = 0; // with POS 0 at the top, with cw rotation
 
     }
 
     public static class TurretConstants {
+
+        // Hood positions (TODO: TUNE THESE)
+        public static final double HOOD_POS_CLOSE = 0.3;
+        public static final double HOOD_POS_FAR = 0.7;
+        public static final double HOOD_POS_MID = 0.5;
+
+
+        // Rotation PID (for CR Servo tracking)
+        public static final double ROTATION_KP = 0.025;
+        public static final double ROTATION_KI = 0.0001;
+        public static final double ROTATION_KD = 0.002;
+
+
+        // Rotation limits
+        public static final double MAX_ROTATION_POWER = 0.7;
+        public static final double MIN_ROTATION_POWER = 0.12;
+        public static final double ROTATION_DEADZONE = 2.0; // degrees
+
         public static final double SERVO_MIN = 0.0;
         public static final double SERVO_MAX = 1.0;
 
