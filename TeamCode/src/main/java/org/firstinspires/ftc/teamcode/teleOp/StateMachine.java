@@ -62,7 +62,6 @@ public class StateMachine {
     }
 
     private void handleGameStateExit(GameState oldState) {
-        m_intake.setIntakeState(Intake.IntakeState.IDLE);
         // m_lift.setLiftState(Lift.LiftState.IDLE);
         switch (oldState) {
             case INTAKING:
@@ -83,11 +82,11 @@ public class StateMachine {
     private void handleGameStateEntry(GameState newState) {
         switch (newState) {
             case INTAKING:
-                m_driveTrain.setDriveState(DriveTrain.DriveState.NORMAL);
+                m_driveTrain.setDriveState(DriveTrain.DriveState.TURBO);
                 m_intake.setIntakeState(Intake.IntakeState.INTAKE);
                 break;
             case EXTAKING:
-                m_driveTrain.setDriveState(DriveTrain.DriveState.NORMAL);
+                m_driveTrain.setDriveState(DriveTrain.DriveState.TURBO);
                 m_intake.setIntakeState(Intake.IntakeState.EXTAKE);
                 break;
             case SCORING:
@@ -100,7 +99,6 @@ public class StateMachine {
                 m_intake.setIntakeState(Intake.IntakeState.IDLE);
                 break;
             case IDLE:
-                m_driveTrain.setDriveState(DriveTrain.DriveState.STOP);
                 m_intake.setIntakeState(Intake.IntakeState.IDLE);
                 break;
         }
@@ -159,6 +157,10 @@ public class StateMachine {
     }
     public Turret getTurret() {
         return m_turret;
+    }
+
+    public TransferSys getTransfer() {
+        return m_transfer;
     }
 
     public RobotState getCurrentRobotState() {

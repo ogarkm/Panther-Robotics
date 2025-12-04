@@ -107,6 +107,7 @@ public class finalTeleOp extends LinearOpMode {
 
             // Telemetry
             telemetry.addData("Robot State", stateMachine.getCurrentRobotState());
+            telemetry.addData("Game State", stateMachine.getCurrentGameState());
             telemetry.addData("Drive State", stateMachine.getDriveTrain().getDriveState());
             telemetry.addData("Alliance",  alliance == 1 ? "Blue" : "Red");
             telemetry.update();

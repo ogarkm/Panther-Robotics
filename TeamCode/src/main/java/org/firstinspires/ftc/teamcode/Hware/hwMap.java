@@ -174,6 +174,10 @@ public class hwMap {
             }
         }
 
+        public double getServoPos(int input) {
+            return lifts[input].getPosition();
+        }
+
         public void setTransferPos(int index, boolean up) { // index takes 1, 2, 3
             if(index < 1 || index > 3) return;
             lifts[index - 1].setPosition(
