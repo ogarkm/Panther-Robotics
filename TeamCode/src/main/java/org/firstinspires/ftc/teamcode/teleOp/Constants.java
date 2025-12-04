@@ -138,23 +138,5 @@ public class Constants {
     }
 
 
-    // Controller Constants
-//    public static class ControllerConstants {
-//        // Controller deadzones
-//        public static final double LEFT_STICK_DEADZONE = 0.1;
-//        public static final double RIGHT_STICK_DEADZONE = 0.1;
-//        public static final double TRIGGER_DEADZONE = 0.1;
-//
-//        // Button mappings - Gamepad1 (Driver)
-//        public static final int PRECISION_MODE_BUTTON = gamepad1.right_trigger;
-//        public static final int TURBO_MODE_BUTTON = gamepad1.left_trigger;
-//        public static final int FIELD_CENTRIC_TOGGLE_BUTTON = gamepad1.x;
-//        public static final int RESET_IMU_BUTTON = gamepad1.y;
-//
-//        // Button mappings - Gamepad2 (Operator)
-//        public static final int INTAKE_BUTTON = gamepad2.a;
-//        public static final int OUTTAKE_BUTTON = gamepad2.b;
-//        public static final int LIFT_UP_BUTTON = gamepad2.dpad_up;
-//        public static final int LIFT_DOWN_BUTTON = gamepad2.dpad_down;
-//    }
+
 }
