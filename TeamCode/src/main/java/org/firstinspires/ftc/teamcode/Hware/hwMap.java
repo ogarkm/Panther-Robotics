@@ -176,10 +176,6 @@ public class hwMap {
             }
         }
 
-        public double getServoPos(int input) {
-            return lifts[input].getPosition();
-        }
-
         public void setTransferPos(int index, boolean up) { // index takes 1, 2, 3
             if(index < 1 || index > 3) return;
             lifts[index - 1].setPosition(
@@ -222,8 +218,8 @@ public class hwMap {
             turretLeftMotor = hardwareMap.dcMotor.get(Constants.TurretConstants.TURRET_LEFT_MOTOR);
             turretRightMotor = hardwareMap.dcMotor.get(Constants.TurretConstants.TURRET_RIGHT_MOTOR);
 
-            turretLeftMotor.setDirection(Constants.TurretConstants.TURRET_MOTOR_DIRECTION);
-            turretRightMotor.setDirection(Constants.TurretConstants.TURRET_MOTOR_DIRECTION);
+            turretLeftMotor.setDirection(Constants.TurretConstants.LEFT_TURRET_MOTOR_DIRECTION);
+            turretRightMotor.setDirection(Constants.TurretConstants.RIGHT_TURRET_MOTOR_DIRECTION);
 
             turretservo = hardwareMap.crservo.get(Constants.TurretConstants.LEFT_TURRET_SERVO);
             hoodservo = hardwareMap.servo.get(Constants.TurretConstants.HOOD_TURRET_SERVO);
@@ -263,9 +259,6 @@ public class hwMap {
 
             return null;  // Not found
         }
-
-
-
 
         public void initAprilTag(HardwareMap hardwareMap) {
             // Create the AprilTag processor.

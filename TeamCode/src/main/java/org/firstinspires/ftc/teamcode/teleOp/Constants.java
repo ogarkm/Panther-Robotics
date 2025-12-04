@@ -133,7 +133,8 @@ public class Constants {
         public static final double kP = 0.02;
         public static final double kI = 0.00005;
         public static final double kD = 0.0015;
-        public static final DcMotorSimple.Direction TURRET_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction LEFT_TURRET_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction RIGHT_TURRET_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
 
     }
 
