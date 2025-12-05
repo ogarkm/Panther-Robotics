@@ -61,9 +61,9 @@ public class finalTeleOp extends LinearOpMode {
                         }
             
             
-                        if (gamepad1.right_trigger > Constants.ControllerConstants.TRIGGER_THRESHOLD) {
+                        if (gamepad1.right_trigger > 0.1) {
                             stateMachine.setGameState(GameState.INTAKING);
-                        } else if (gamepad1.left_trigger > Constants.ControllerConstants.TRIGGER_THRESHOLD) {
+                        } else if (gamepad1.left_trigger > 0.1) {
                             stateMachine.setGameState(GameState.EXTAKING);
                         } else {
                             // Only revert to IDLE if the current state was one of the trigger states.

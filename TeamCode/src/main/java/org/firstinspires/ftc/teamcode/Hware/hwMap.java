@@ -233,7 +233,7 @@ public class hwMap {
 
         public void setTurretPower(double power) {
             turretLeftMotor.setPower(power);
-            turretRightMotor.setPower(power);
+            turretRightMotor.setPower(-power);
         }
 
         public void turretOff() {

@@ -46,7 +46,7 @@ public class Constants {
         public static final String FRONT_INTAKE_MOTOR = "frontIntake";
         public static final String BACK_INTAKE_MOTOR = "backIntake";
 
-        public static final DcMotorSimple.Direction FRONT_INTAKE_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction FRONT_INTAKE_DIRECTION = DcMotorSimple.Direction.REVERSE;
         public static final DcMotorSimple.Direction BACK_INTAKE_DIRECTION = DcMotorSimple.Direction.FORWARD;
 
         public static DcMotor.ZeroPowerBehavior INTAKE_ZERO_POWER_BEHAVIOR = DcMotor.ZeroPowerBehavior.BRAKE;
@@ -84,6 +84,8 @@ public class Constants {
         public static final double FLICK_POS_UP = 1; // with POS 0 at the top, with cw rotation
         public static final double FLICK_POS_DOWN = 0; // with POS 0 at the top, with cw rotation
 
+
+
     }
 
     public static class TurretConstants {
@@ -110,9 +112,9 @@ public class Constants {
 
         public static final double MANUAL_TURRET_SPEED_DEG = 1.0;
 
-        public static final double TURRET_POWER_MID = 0.7;
-        public static final double TURRET_POWER_MAX = 0.58;
-        public static final double TURRET_POWER_LOW = 0.37;
+        public static final double TURRET_POWER_MID = -0.6;
+        public static final double TURRET_POWER_MAX = -1;
+        public static final double TURRET_POWER_LOW = -0.37;
 
         public static final double SERVO_TO_TURRET_GEAR_RATIO = 3.5;
         public static final double TURRET_HOME_ANGLE = 0.0; // Home pos in deg (forward)

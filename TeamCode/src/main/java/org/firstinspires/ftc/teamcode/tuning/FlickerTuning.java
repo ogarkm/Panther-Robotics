@@ -68,16 +68,12 @@ public class FlickerTuning extends LinearOpMode {
 
             // Position adjustment
             if (gamepad1.dpad_up && !lastDpadUp) {
-                positions[selectedFlicker] += increment;
-                if (positions[selectedFlicker] > 1.0) positions[selectedFlicker] = 1.0;
-                transfer.lifts[selectedFlicker].setPosition(positions[selectedFlicker]);
+                transfer.lifts[selectedFlicker].setPosition(1);
             }
             lastDpadUp = gamepad1.dpad_up;
 
             if (gamepad1.dpad_down && !lastDpadDown) {
-                positions[selectedFlicker] -= increment;
-                if (positions[selectedFlicker] < 0.0) positions[selectedFlicker] = 0.0;
-                transfer.lifts[selectedFlicker].setPosition(positions[selectedFlicker]);
+                transfer.lifts[selectedFlicker].setPosition(0);
             }
             lastDpadDown = gamepad1.dpad_down;
 
