@@ -166,8 +166,11 @@ public class hwMap {
             indexB = hardwareMap.get(NormalizedColorSensor.class, Constants.TransferConstants.INDEX_SENSOR_B);
             indexC = hardwareMap.get(NormalizedColorSensor.class, Constants.TransferConstants.INDEX_SENSOR_C);
 
+            flickB.setDirection(Servo.Direction.REVERSE);
+
             this.sensors = new NormalizedColorSensor[]{ indexA, indexB, indexC };
             this.lifts = new Servo[]{flickA, flickB, flickC};
+
 
             for (NormalizedColorSensor sensor : sensors) {
                 if (sensor instanceof SwitchableLight) {

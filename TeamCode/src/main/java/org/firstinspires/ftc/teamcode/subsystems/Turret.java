@@ -90,10 +90,9 @@ public class Turret {
 
     // Manual rotation control (for testing or teleop override)
     public void manualRotate(double joystickInput) {
-        // joystickInput should be -1.0 to 1.0 from right stick X
         double power = joystickInput * Constants.TurretConstants.MAX_ROTATION_POWER;
-        hardware.setTurretRotationPower(power);
-        resetPID(); // Reset PID when manually controlling
+        hardware.setTurretRotationPower(joystickInput);
+        resetPID();
     }
 
     private void trackAprilTag() {

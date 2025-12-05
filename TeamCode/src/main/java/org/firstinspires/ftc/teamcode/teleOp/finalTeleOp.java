@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hware.hwMap;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.TransferSys;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
 // TODO - SET THE ALLIANCE SIDE
@@ -22,6 +23,7 @@ public class finalTeleOp extends LinearOpMode {
     private boolean wasGamepad2xPressed = false;
     private boolean wasGamepad1StartPressed = false;
     private boolean wasGamepad2StartPressed = false;
+    private boolean wasGamepad2yPressed = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,6 +47,7 @@ public class finalTeleOp extends LinearOpMode {
                         boolean isGamepad2xPressed = gamepad2.x;
                         boolean isGamepad1StartPressed = gamepad1.start;
                         boolean isGamepad2StartPressed = gamepad2.start;
+                        boolean isGamepad2yPressed = gamepad2.y;
             
                         double y = -gamepad1.left_stick_y;
                         double x = gamepad1.left_stick_x;
@@ -90,6 +93,14 @@ public class finalTeleOp extends LinearOpMode {
                             } else {
                                 stateMachine.getTurret().setTurretState(Turret.TurretState.IDLE);
                             }
+                        }
+
+                        // Manual flicker control
+                        if (isGamepad2yPressed && !wasGamepad2yPressed) {
+                            if (stateMachine.getTransfer().getTransferState() != TransferSys.TransferState.MANUAL_FLICK) {
+                                stateMachine.getTransfer().setTransferState(TransferSys.TransferState.MANUAL_FLICK);
+                            }
+                            stateMachine.getTransfer().manualFlick();
                         }
             
             
@@ -140,6 +151,7 @@ public class finalTeleOp extends LinearOpMode {
                         wasGamepad2xPressed = isGamepad2xPressed;
                         wasGamepad1StartPressed = isGamepad1StartPressed;
                         wasGamepad2StartPressed = isGamepad2StartPressed;
+                        wasGamepad2yPressed = isGamepad2yPressed;
                     }
             
                     stateMachine.setRobotState(RobotState.ESTOP);

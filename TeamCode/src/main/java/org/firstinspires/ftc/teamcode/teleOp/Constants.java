@@ -8,10 +8,10 @@ public class Constants {
 
     // Drive Constants
     public static class DriveConstants {
-        public static final String FRONT_LEFT_MOTOR = "fl";
-        public static final String FRONT_RIGHT_MOTOR = "fr";
-        public static final String BACK_LEFT_MOTOR = "bl";
-        public static final String BACK_RIGHT_MOTOR = "br";
+        public static final String FRONT_LEFT_MOTOR = "leftFront";
+        public static final String FRONT_RIGHT_MOTOR = "rightFront";
+        public static final String BACK_LEFT_MOTOR = "leftBack";
+        public static final String BACK_RIGHT_MOTOR = "rightBack";
         public static final DcMotorSimple.Direction FRONT_LEFT_DIRECTION = DcMotorSimple.Direction.REVERSE;
         public static final DcMotorSimple.Direction FRONT_RIGHT_DIRECTION = DcMotorSimple.Direction.FORWARD;
         public static final DcMotorSimple.Direction BACK_LEFT_DIRECTION = DcMotorSimple.Direction.REVERSE;
@@ -81,7 +81,8 @@ public class Constants {
 
 
         // Lift Constants - TODO TUNE THESE PLS
-        public static final double FLICK_POS_UP = 1; // with POS 0 at the top, with cw rotation
+        public static final double FLICK_POS_UP = 0.95; // with POS 0 at the top, with cw rotation
+        public static final double FLICK_POS_UP_A = 0.8;
         public static final double FLICK_POS_DOWN = 0; // with POS 0 at the top, with cw rotation
 
 
