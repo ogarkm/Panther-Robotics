@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tuning;
+package org.firstinspires.ftc.teamcode.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -68,12 +68,16 @@ public class FlickerTuning extends LinearOpMode {
 
             // Position adjustment
             if (gamepad1.dpad_up && !lastDpadUp) {
-                transfer.lifts[selectedFlicker].setPosition(1);
+                positions[selectedFlicker] += increment;
+                if (positions[selectedFlicker] > 1.0) positions[selectedFlicker] = 1.0;
+                transfer.lifts[selectedFlicker].setPosition(positions[selectedFlicker]);
             }
             lastDpadUp = gamepad1.dpad_up;
 
             if (gamepad1.dpad_down && !lastDpadDown) {
-                transfer.lifts[selectedFlicker].setPosition(0);
+                positions[selectedFlicker] -= increment;
+                if (positions[selectedFlicker] < 0.0) positions[selectedFlicker] = 0.0;
+                transfer.lifts[selectedFlicker].setPosition(positions[selectedFlicker]);
             }
             lastDpadDown = gamepad1.dpad_down;
 

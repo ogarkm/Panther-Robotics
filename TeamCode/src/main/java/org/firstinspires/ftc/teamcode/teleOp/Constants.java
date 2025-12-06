@@ -79,13 +79,13 @@ public class Constants {
         public static final String INDEX_SENSOR_B = "indexSensorB";
         public static final String INDEX_SENSOR_C = "indexSensorC";
 
-        public static final double FLICK_POS_UP_A = 0.95;
-        public static final double FLICK_POS_UP_B = 0;
-        public static final double FLICK_POS_UP_C = 0.95;
+        public static final double FLICK_POS_UP_A = 1;
+        public static final double FLICK_POS_UP_B = .5;
+        public static final double FLICK_POS_UP_C = 0.1;
 
-        public static final double FLICK_POS_DOWN_A = 0;
-        public static final double FLICK_POS_DOWN_B = 0.95;
-        public static final double FLICK_POS_DOWN_C = 0;
+        public static final double FLICK_POS_DOWN_A = .6;
+        public static final double FLICK_POS_DOWN_B = 0.1;
+        public static final double FLICK_POS_DOWN_C = 0.55;
 
         public static final double[] FLICK_UP_POSITIONS = {FLICK_POS_UP_A, FLICK_POS_UP_B, FLICK_POS_UP_C};
         public static final double[] FLICK_DOWN_POSITIONS = {FLICK_POS_DOWN_A, FLICK_POS_DOWN_B, FLICK_POS_DOWN_C};
