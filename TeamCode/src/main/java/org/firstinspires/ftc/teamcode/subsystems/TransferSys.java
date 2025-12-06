@@ -12,10 +12,8 @@ public class TransferSys {
 
     private long flickTimer = 0;
     private static final int FLICK_DURATION_MS = 300;
-    private static final int STAGGER_DELAY_MS = 150; // 0.15 seconds
     private List<Integer> currentFlickPlan = new ArrayList<>();
     private int currentFlickIndex = 0;
-    private boolean isStaggeredFlick = false;
 
     public enum TransferState {
         INDEXING,
@@ -64,7 +62,6 @@ public class TransferSys {
     private void startFlickSequence() {
         indexAllArtifacts();
         currentFlickPlan = buildFlickPlan();
-        isStaggeredFlick = (currentFlickPlan.size() == 3 && currentFlickPlan.get(0) == 3 && currentFlickPlan.get(1) == 1 && currentFlickPlan.get(2) == 2);
 
         if (currentFlickPlan.isEmpty()) {
             setTransferState(TransferState.IDLING);
@@ -76,64 +73,22 @@ public class TransferSys {
     }
 
     private void processFlickSequence() {
-        if (isStaggeredFlick) {
-            switch (currentFlickIndex) {
-                case 0: // Flicker C is up
-                    if (System.currentTimeMillis() - flickTimer > FLICK_DURATION_MS) {
-                        dropCurrentItem(3); // Drop C
-                        flickTimer = System.currentTimeMillis(); // Reset timer for delay
-                        currentFlickIndex++;
-                    }
-                    break;
-                case 1: // Delay for A, then lift A
-                    if (System.currentTimeMillis() - flickTimer > STAGGER_DELAY_MS) {
-                        liftCurrentItem(1); // Lift A
-                        flickTimer = System.currentTimeMillis(); // Reset timer for A's duration
-                        currentFlickIndex++;
-                    }
-                    break;
-                case 2: // Flicker A is up, then drop A, delay for B, then lift B
-                    if (System.currentTimeMillis() - flickTimer > FLICK_DURATION_MS) {
-                        dropCurrentItem(1); // Drop A
-                        flickTimer = System.currentTimeMillis(); // Reset timer for delay
-                        currentFlickIndex++;
-                    }
-                    break;
-                case 3: // Delay for B, then lift B
-                    if (System.currentTimeMillis() - flickTimer > STAGGER_DELAY_MS) {
-                        liftCurrentItem(2); // Lift B
-                        flickTimer = System.currentTimeMillis(); // Reset timer for B's duration
-                        currentFlickIndex++;
-                    }
-                    break;
-                case 4: // Flicker B is up, then drop B
-                    if (System.currentTimeMillis() - flickTimer > FLICK_DURATION_MS) {
-                        dropCurrentItem(2); // Drop B
-                        // All done
-                        setTransferState(TransferState.IDLING);
-                        isStaggeredFlick = false;
-                    }
-                    break;
+        if (System.currentTimeMillis() - flickTimer > FLICK_DURATION_MS) {
+
+            dropCurrentItem(currentFlickPlan.get(currentFlickIndex));
+
+            if (currentFlickIndex < currentFlickPlan.size()) {
+                int slot = currentFlickPlan.get(currentFlickIndex);
+                artifactColors[slot - 1] = 0;
             }
-        } else {
-            // Original flick sequence logic
-            if (System.currentTimeMillis() - flickTimer > FLICK_DURATION_MS) {
 
-                dropCurrentItem(currentFlickPlan.get(currentFlickIndex));
+            currentFlickIndex++;
 
-                if (currentFlickIndex < currentFlickPlan.size()) {
-                    int slot = currentFlickPlan.get(currentFlickIndex);
-                    artifactColors[slot - 1] = 0;
-                }
-
-                currentFlickIndex++;
-
-                if (currentFlickIndex < currentFlickPlan.size()) {
-                    liftCurrentItem(currentFlickPlan.get(currentFlickIndex)); // Lifts next one immediately as previous drops
-                } else {
-                    // Done
-                    setTransferState(TransferState.IDLING);
-                }
+            if (currentFlickIndex < currentFlickPlan.size()) {
+                liftCurrentItem(currentFlickPlan.get(currentFlickIndex)); // Lifts next one immediately as previous drops
+            } else {
+                // Done
+                setTransferState(TransferState.IDLING);
             }
         }
     }
@@ -158,14 +113,6 @@ public class TransferSys {
             if (color != 0) {
                 detectedArtifactCount++;
             }
-        }
-
-        if (detectedArtifactCount == 1) {
-            // Staggered flick: C, then A, then B
-            plan.add(3); // Flicker C
-            plan.add(1); // Flicker A
-            plan.add(2); // Flicker B
-            return plan;
         }
 
         for (int desiredColor : motif) {
