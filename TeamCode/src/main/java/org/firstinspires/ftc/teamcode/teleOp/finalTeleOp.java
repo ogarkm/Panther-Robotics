@@ -18,6 +18,8 @@ public class finalTeleOp extends LinearOpMode {
     // State variables for toggles
     private boolean launching = false;
 
+    private boolean tracking = false;
+
     // Button debouncing variables
     private boolean wasGamepad2aPressed = false;
     private boolean wasGamepad2xPressed = false;
@@ -126,7 +128,13 @@ public class finalTeleOp extends LinearOpMode {
             
                         // Turret Tracking ON (debounced - one-shot)
                         if (isGamepad2StartPressed && !wasGamepad2StartPressed) {
-                            stateMachine.getTurret().setTurretState(Turret.TurretState.TRACKING);
+                            tracking = !tracking;
+                            if (tracking) {
+                                stateMachine.getTurret().setTurretState(Turret.TurretState.TRACKING);
+                            }
+                            else {
+                                stateMachine.getTurret().setTurretState(Turret.TurretState.IDLE);
+                            }
                         }
             
                         if (gamepad2.right_bumper) {

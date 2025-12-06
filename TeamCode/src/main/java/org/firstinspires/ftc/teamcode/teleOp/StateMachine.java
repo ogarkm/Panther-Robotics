@@ -69,7 +69,6 @@ public class StateMachine {
                 break;
             case SCORING:
                 m_transfer.setTransferState(TransferSys.TransferState.STOP);
-                m_turret.setTurretState(Turret.TurretState.IDLE);
                 break;
         }
     }
