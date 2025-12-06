@@ -46,7 +46,7 @@ public class Constants {
         public static final String FRONT_INTAKE_MOTOR = "frontIntake";
         public static final String BACK_INTAKE_MOTOR = "backIntake";
 
-        public static final DcMotorSimple.Direction FRONT_INTAKE_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction FRONT_INTAKE_DIRECTION = DcMotorSimple.Direction.REVERSE;
         public static final DcMotorSimple.Direction BACK_INTAKE_DIRECTION = DcMotorSimple.Direction.FORWARD;
 
         public static DcMotor.ZeroPowerBehavior INTAKE_ZERO_POWER_BEHAVIOR = DcMotor.ZeroPowerBehavior.BRAKE;
@@ -81,8 +81,11 @@ public class Constants {
 
 
         // Lift Constants - TODO TUNE THESE PLS
-        public static final double FLICK_POS_UP = 1; // with POS 0 at the top, with cw rotation
+        public static final double FLICK_POS_UP = 0.95; // with POS 0 at the top, with cw rotation
+        public static final double FLICK_POS_UP_A = 0.8;
         public static final double FLICK_POS_DOWN = 0; // with POS 0 at the top, with cw rotation
+
+
 
     }
 
@@ -110,9 +113,9 @@ public class Constants {
 
         public static final double MANUAL_TURRET_SPEED_DEG = 1.0;
 
-        public static final double TURRET_POWER_MID = 0.7;
-        public static final double TURRET_POWER_MAX = 0.58;
-        public static final double TURRET_POWER_LOW = 0.37;
+        public static final double TURRET_POWER_MID = -0.6;
+        public static final double TURRET_POWER_MAX = -1;
+        public static final double TURRET_POWER_LOW = -0.37;
 
         public static final double SERVO_TO_TURRET_GEAR_RATIO = 3.5;
         public static final double TURRET_HOME_ANGLE = 0.0; // Home pos in deg (forward)
@@ -133,29 +136,10 @@ public class Constants {
         public static final double kP = 0.02;
         public static final double kI = 0.00005;
         public static final double kD = 0.0015;
-        public static final DcMotorSimple.Direction LEFT_TURRET_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
-        public static final DcMotorSimple.Direction RIGHT_TURRET_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
+        public static final DcMotorSimple.Direction TURRET_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
 
     }
 
 
-    // Controller Constants
-//    public static class ControllerConstants {
-//        // Controller deadzones
-//        public static final double LEFT_STICK_DEADZONE = 0.1;
-//        public static final double RIGHT_STICK_DEADZONE = 0.1;
-//        public static final double TRIGGER_DEADZONE = 0.1;
-//
-//        // Button mappings - Gamepad1 (Driver)
-//        public static final int PRECISION_MODE_BUTTON = gamepad1.right_trigger;
-//        public static final int TURBO_MODE_BUTTON = gamepad1.left_trigger;
-//        public static final int FIELD_CENTRIC_TOGGLE_BUTTON = gamepad1.x;
-//        public static final int RESET_IMU_BUTTON = gamepad1.y;
-//
-//        // Button mappings - Gamepad2 (Operator)
-//        public static final int INTAKE_BUTTON = gamepad2.a;
-//        public static final int OUTTAKE_BUTTON = gamepad2.b;
-//        public static final int LIFT_UP_BUTTON = gamepad2.dpad_up;
-//        public static final int LIFT_DOWN_BUTTON = gamepad2.dpad_down;
-//    }
+
 }

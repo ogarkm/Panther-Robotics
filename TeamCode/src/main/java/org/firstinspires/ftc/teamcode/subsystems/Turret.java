@@ -13,17 +13,9 @@ public class Turret {
 
     private int[] apriltags = {20, 24};
 
-    // PID Constants for CR Servo rotation
-    private static final double KP = 0.025;
-    private static final double KI = 0.0001;
-    private static final double KD = 0.002;
-
-    private static final double MAX_ROTATION_POWER = 0.7;
-    private static final double DEADZONE = 2.0; // Degrees
-    private static final double MIN_POWER = 0.12; // Minimum to overcome friction
-
     private double integral = 0;
     private double lastError = 0;
+    private double filteredYaw = 0;
 
     private final ElapsedTime loopTimer = new ElapsedTime();
 
@@ -98,10 +90,9 @@ public class Turret {
 
     // Manual rotation control (for testing or teleop override)
     public void manualRotate(double joystickInput) {
-        // joystickInput should be -1.0 to 1.0 from right stick X
-        double power = joystickInput * MAX_ROTATION_POWER;
-        hardware.setTurretRotationPower(power);
-        resetPID(); // Reset PID when manually controlling
+        double power = joystickInput * Constants.TurretConstants.MAX_ROTATION_POWER;
+        hardware.setTurretRotationPower(joystickInput);
+        resetPID();
     }
 
     private void trackAprilTag() {
@@ -125,7 +116,7 @@ public class Turret {
         double error = yawDeg;
 
         // If within deadzone, stop
-        if (Math.abs(error) < DEADZONE) {
+        if (Math.abs(error) < Constants.TurretConstants.ROTATION_DEADZONE) {
             hardware.stopTurretRotation();
             resetPID();
             return;
@@ -139,14 +130,14 @@ public class Turret {
         double derivative = (error - lastError) / dt;
         lastError = error;
 
-        double pidOutput = KP * error + KI * integral + KD * derivative;
+        double pidOutput = Constants.TurretConstants.ROTATION_KP * error + Constants.TurretConstants.ROTATION_KI * integral + Constants.TurretConstants.ROTATION_KD * derivative;
 
         // Add minimum power to overcome static friction
         if (Math.abs(pidOutput) > 0.01) {
-            pidOutput = pidOutput + Math.copySign(MIN_POWER, pidOutput);
+            pidOutput = pidOutput + Math.copySign(Constants.TurretConstants.MIN_ROTATION_POWER, pidOutput);
         }
 
-        pidOutput = clamp(pidOutput, -MAX_ROTATION_POWER, MAX_ROTATION_POWER);
+        pidOutput = clamp(pidOutput, -Constants.TurretConstants.MAX_ROTATION_POWER, Constants.TurretConstants.MAX_ROTATION_POWER);
 
         // Negative because we want to reduce error (turn toward target)
         hardware.setTurretRotationPower(-pidOutput);
@@ -155,11 +146,12 @@ public class Turret {
     private void resetPID() {
         integral = 0;
         lastError = 0;
+        filteredYaw = 0;
     }
 
     private double lowPassFilter(double input, double factor) {
-        // Blend new input with previous error for smoothing
-        return (factor * input) + (1 - factor) * lastError;
+        filteredYaw = (factor * input) + (1 - factor) * filteredYaw;
+        return filteredYaw;
     }
 
     private double clamp(double v, double min, double max) {

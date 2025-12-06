@@ -166,14 +166,21 @@ public class hwMap {
             indexB = hardwareMap.get(NormalizedColorSensor.class, Constants.TransferConstants.INDEX_SENSOR_B);
             indexC = hardwareMap.get(NormalizedColorSensor.class, Constants.TransferConstants.INDEX_SENSOR_C);
 
+            flickB.setDirection(Servo.Direction.REVERSE);
+
             this.sensors = new NormalizedColorSensor[]{ indexA, indexB, indexC };
             this.lifts = new Servo[]{flickA, flickB, flickC};
+
 
             for (NormalizedColorSensor sensor : sensors) {
                 if (sensor instanceof SwitchableLight) {
                     ((SwitchableLight) sensor).enableLight(true);
                 }
             }
+        }
+
+        public double getServoPos(int input) {
+            return lifts[input].getPosition();
         }
 
         public void setTransferPos(int index, boolean up) { // index takes 1, 2, 3
@@ -218,8 +225,8 @@ public class hwMap {
             turretLeftMotor = hardwareMap.dcMotor.get(Constants.TurretConstants.TURRET_LEFT_MOTOR);
             turretRightMotor = hardwareMap.dcMotor.get(Constants.TurretConstants.TURRET_RIGHT_MOTOR);
 
-            turretLeftMotor.setDirection(Constants.TurretConstants.LEFT_TURRET_MOTOR_DIRECTION);
-            turretRightMotor.setDirection(Constants.TurretConstants.RIGHT_TURRET_MOTOR_DIRECTION);
+            turretLeftMotor.setDirection(Constants.TurretConstants.TURRET_MOTOR_DIRECTION);
+            turretRightMotor.setDirection(Constants.TurretConstants.TURRET_MOTOR_DIRECTION);
 
             turretservo = hardwareMap.crservo.get(Constants.TurretConstants.LEFT_TURRET_SERVO);
             hoodservo = hardwareMap.servo.get(Constants.TurretConstants.HOOD_TURRET_SERVO);
@@ -229,7 +236,7 @@ public class hwMap {
 
         public void setTurretPower(double power) {
             turretLeftMotor.setPower(power);
-            turretRightMotor.setPower(power);
+            turretRightMotor.setPower(-power);
         }
 
         public void turretOff() {
@@ -259,6 +266,9 @@ public class hwMap {
 
             return null;  // Not found
         }
+
+
+
 
         public void initAprilTag(HardwareMap hardwareMap) {
             // Create the AprilTag processor.
