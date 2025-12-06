@@ -151,23 +151,23 @@ public class TransferSys {
 
     public void manualFlick() {
         switch (manualFlickStep) {
-            case 0: // Flicker A Up
-                hardware.setTransferPos(1, true);
-                break;
-            case 1: // Flicker A Down
-                hardware.setTransferPos(1, false);
-                break;
-            case 2: // Flicker B Up
+            case 0: // Flicker B Up
                 hardware.setTransferPos(2, true);
                 break;
-            case 3: // Flicker B Down
+            case 1: // Flicker B Down
                 hardware.setTransferPos(2, false);
                 break;
-            case 4: // Flicker C Up
+            case 2: // Flicker C Up
                 hardware.setTransferPos(3, true);
                 break;
-            case 5: // Flicker C Down
+            case 3: // Flicker C Down
                 hardware.setTransferPos(3, false);
+                break;
+            case 4: // Flicker A Up
+                hardware.setTransferPos(1, true);
+                break;
+            case 5: // Flicker A Down
+                hardware.setTransferPos(1, false);
                 break;
         }
         manualFlickStep = (manualFlickStep + 1) % 6;

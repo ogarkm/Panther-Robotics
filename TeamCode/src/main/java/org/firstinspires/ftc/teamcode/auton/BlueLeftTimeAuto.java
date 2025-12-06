@@ -41,47 +41,130 @@ public class BlueLeftTimeAuto extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            // === YOUR AUTONOMOUS SEQUENCE HERE ===
 
-            // Example sequence (adjust times and movements for your robot):
+            //-----------------------------------------------------------------
+            // 0. Start turret wheel early so it’s already spinning when you shoot
+            //-----------------------------------------------------------------
+            turret.setTurretPower(0.70);   // spin flywheel
+            sleep(800);                    // brief warm-up
 
-            // 1. Drive forward to scoring position
-            driveForward(DRIVE_POWER, 1500); // 1.5 seconds forward
+            //-----------------------------------------------------------------
+            // 1. Move back a few inches (tune time)
+            //-----------------------------------------------------------------
+            driveBackward(0.45, 450);      // ~4–6 inches depending on robot
 
-            // 2. Strafe right to align
-            strafeRight(STRAFE_POWER, 800); // 0.8 seconds right
+            //-----------------------------------------------------------------
+            // 2. Shoot 3 preloads
+            //-----------------------------------------------------------------
+            for (int slot = 1; slot <= 3; slot++) {
+                transfer.setTransferPos(slot, true);
+                sleep(300);
+                transfer.setTransferPos(slot, false);
+                sleep(150);
+            }
 
-            // 3. Score preloaded artifacts
-            scoreArtifacts();
+            //-----------------------------------------------------------------
+            // 3. Turn ~30–45° left
+            //-----------------------------------------------------------------
+            turnLeft(0.50, 400);           // adjust time for your robot
 
-            // 4. Drive backward
-            driveBackward(DRIVE_POWER, 1000); // 1 second backward
+            //-----------------------------------------------------------------
+            // 4. Strafe left into intake lane
+            //-----------------------------------------------------------------
+            strafeLeft(0.55, 500);
 
-            // 5. Turn to face artifacts
-            turnLeft(TURN_POWER, 600); // 0.6 seconds turning
+            //-----------------------------------------------------------------
+            // 5. Drive forward while intaking
+            //-----------------------------------------------------------------
+            intake.frontIntakeMotor.setPower(1);
+            intake.backIntakeMotor.setPower(1);
+            driveForward(0.45, 900);       // ~1–1.5 tiles forward
+            sleep(100);
+            driveBackward(0.45, 200);      // small settle-back
+            intake.frontIntakeMotor.setPower(0);
+            intake.backIntakeMotor.setPower(0);
 
-            // 6. Intake artifacts
-            intakeArtifacts(2000); // 2 seconds of intaking
+            //-----------------------------------------------------------------
+            // 6. Drive back to shooting position
+            //-----------------------------------------------------------------
+            driveBackward(0.55, 800);
 
-            // 7. Turn back to scoring position
-            turnRight(TURN_POWER, 600);
+            // turn back to original heading for shooting
+            turnRight(0.50, 400);
 
-            // 8. Drive to scoring position again
-            driveForward(DRIVE_POWER, 1000);
+            //-----------------------------------------------------------------
+            // 7. Shoot again (assuming 3 artifacts picked up)
+            //-----------------------------------------------------------------
+            for (int slot = 1; slot <= 3; slot++) {
+                transfer.setTransferPos(slot, true);
+                sleep(300);
+                transfer.setTransferPos(slot, false);
+                sleep(150);
+            }
 
-            // 9. Score collected artifacts
-            scoreArtifacts();
+            //-----------------------------------------------------------------
+            // 8. Repeat cycle to reach 12–15 artifacts if time permits
+            //-----------------------------------------------------------------
+            // second intake cycle
+            turnLeft(0.50, 400);
+            strafeLeft(0.55, 500);
 
-            // 10. Park
-            strafeLeft(DRIVE_POWER, 1200);
-            driveBackward(SLOW_POWER, 500);
+            intake.frontIntakeMotor.setPower(1);
+            intake.backIntakeMotor.setPower(1);
 
-            telemetry.addLine("Autonomous Complete!");
-            telemetry.update();
+            driveForward(0.45, 900);   // intake pass 2
+            sleep(100);
+            driveBackward(0.45, 200);
+
+            intake.frontIntakeMotor.setPower(0);
+            intake.backIntakeMotor.setPower(0);
+
+            // return again to shoot
+            driveBackward(0.55, 800);
+            turnRight(0.50, 400);
+
+            // shoot again (9 artifacts total)
+            for (int slot = 1; slot <= 3; slot++) {
+                transfer.setTransferPos(slot, true);
+                sleep(300);
+                transfer.setTransferPos(slot, false);
+                sleep(150);
+            }
+
+            //-----------------------------------------------------------------
+            // 9. Third cycle if there is time left → try to reach 12–15
+            //-----------------------------------------------------------------
+            // COMMENT OUT if your auton runs out of time.
+
+            // turnLeft(0.50, 400);
+            // strafeLeft(0.55, 500);
+
+            // intake.frontIntakeMotor.setPower(1);
+            // intake.backIntakeMotor.setPower(1);
+
+            // driveForward(0.45, 900);
+            // sleep(100);
+            // driveBackward(0.45, 200);
+
+            // intake.frontIntakeMotor.setPower(0);
+            // intake.backIntakeMotor.setPower(0);
+
+            // driveBackward(0.55, 800);
+            // turnRight(0.50, 400);
+
+            // shoot again (12 total)
+            // for (int slot = 1; slot <= 3; slot++) {
+            //     transfer.setTransferPos(slot, true);
+            //     sleep(300);
+            //     transfer.setTransferPos(slot, false);
+            //     sleep(150);
+            // }
+
+            turret.turretOff();    // turn off flywheel at end
         }
-    }
 
-    // ========== DRIVE METHODS ==========
+    }
+        // ========== DRIVE METHODS ==========
 
     private void driveForward(double power, long milliseconds) {
         driveTrain.setMotorPowers(power, power, power, power);
