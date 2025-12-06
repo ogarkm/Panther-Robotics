@@ -186,7 +186,7 @@ public class hwMap {
         public void setTransferPos(int index, boolean up) { // index takes 1, 2, 3
             if(index < 1 || index > 3) return;
             lifts[index - 1].setPosition(
-                    up ? Constants.TransferConstants.FLICK_POS_UP : Constants.TransferConstants.FLICK_POS_DOWN
+                    up ? Constants.TransferConstants.FLICK_UP_POSITIONS[index - 1] : Constants.TransferConstants.FLICK_DOWN_POSITIONS[index - 1]
             );
         }
 

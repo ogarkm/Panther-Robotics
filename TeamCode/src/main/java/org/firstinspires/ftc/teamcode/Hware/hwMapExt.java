@@ -77,14 +77,6 @@ public class hwMapExt {
         }
     }
 
-    public void checkFlickPos() {
-        for (Servo servo : lifts) {
-            if (servo.getPosition() == TransferConstants.FLICK_POS_UP) {
-                servo.setPosition(TransferConstants.FLICK_POS_DOWN);
-            }
-        }
-    }
-
 
 
     public void setMotorModes(DcMotor.RunMode mode) {
@@ -127,14 +119,6 @@ public class hwMapExt {
         };
     }
 
-
-
-    public void setTransferPos(int index, boolean up) { // index takes 1, 2, 3
-
-        lifts[index - 1].setPosition(
-                up ? TransferConstants.FLICK_POS_UP : TransferConstants.FLICK_POS_DOWN
-        );
-    }
 
 
     public int detectArtifactColor(int index) {

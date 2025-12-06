@@ -79,11 +79,16 @@ public class Constants {
         public static final String INDEX_SENSOR_B = "indexSensorB";
         public static final String INDEX_SENSOR_C = "indexSensorC";
 
+        public static final double FLICK_POS_UP_A = 0.95;
+        public static final double FLICK_POS_UP_B = 0;
+        public static final double FLICK_POS_UP_C = 0.95;
 
-        // Lift Constants - TODO TUNE THESE PLS
-        public static final double FLICK_POS_UP = 0.95; // with POS 0 at the top, with cw rotation
-        public static final double FLICK_POS_UP_A = 0.8;
-        public static final double FLICK_POS_DOWN = 0; // with POS 0 at the top, with cw rotation
+        public static final double FLICK_POS_DOWN_A = 0;
+        public static final double FLICK_POS_DOWN_B = 0.95;
+        public static final double FLICK_POS_DOWN_C = 0;
+
+        public static final double[] FLICK_UP_POSITIONS = {FLICK_POS_UP_A, FLICK_POS_UP_B, FLICK_POS_UP_C};
+        public static final double[] FLICK_DOWN_POSITIONS = {FLICK_POS_DOWN_A, FLICK_POS_DOWN_B, FLICK_POS_DOWN_C};
 
 
 
