@@ -80,11 +80,11 @@ public class Constants {
         public static final String INDEX_SENSOR_C = "indexSensorC";
 
         public static final double FLICK_POS_UP_A = 1;
-        public static final double FLICK_POS_UP_B = .5;
+        public static final double FLICK_POS_UP_B = .55;
         public static final double FLICK_POS_UP_C = 0.1;
 
-        public static final double FLICK_POS_DOWN_A = .6;
-        public static final double FLICK_POS_DOWN_B = 0.1;
+        public static final double FLICK_POS_DOWN_A = .55;
+        public static final double FLICK_POS_DOWN_B = 0.15;
         public static final double FLICK_POS_DOWN_C = 0.55;
 
         public static final double[] FLICK_UP_POSITIONS = {FLICK_POS_UP_A, FLICK_POS_UP_B, FLICK_POS_UP_C};
@@ -118,7 +118,7 @@ public class Constants {
 
         public static final double MANUAL_TURRET_SPEED_DEG = 1.0;
 
-        public static final double TURRET_POWER_MID = -0.6;
+        public static final double TURRET_POWER_MID = -0.90;
         public static final double TURRET_POWER_MAX = -1;
         public static final double TURRET_POWER_LOW = -0.37;
 
@@ -128,6 +128,7 @@ public class Constants {
         public static final double TURN_GAIN = 0.02;
 
         public static final double EXTAKE_POWER = 0.3;
+        public static final double INTAKE_POWER = -0.04;
 
 
         public static final String LEFT_TURRET_SERVO = "turretservo";

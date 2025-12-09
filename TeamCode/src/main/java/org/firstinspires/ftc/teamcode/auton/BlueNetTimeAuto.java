@@ -3,17 +3,14 @@ package org.firstinspires.ftc.teamcode.auton;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Hware.hwMap;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.TransferSys;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
 
 //THIS IS HARDCODED TIME BASED AUTON IN CASE WE CANT GET OUR ROADRUNNER DONE.
 //THIS WILL BE UNRELIABLE AS THIS CAN VARY DUE TO BATTERY VOLTAGE, BUT IT MAY WORK ON FULL BATTERY
 //AS LONG AS I TUNE IT ON FULL BATTERY (etc)
 
-@Autonomous(name="Blue Left Time Auto", group="Blue")
-public class BlueLeftTimeAuto extends LinearOpMode {
+@Autonomous(name="Blue Net Time Auto", group="Blue")
+public class BlueNetTimeAuto extends LinearOpMode {
 
     private hwMap.DriveHwMap driveTrain;
     private hwMap.IntakeHwMap intake;
@@ -39,8 +36,10 @@ public class BlueLeftTimeAuto extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+        transfer.resetAllFlickers();
 
         if (opModeIsActive()) {
+            /*
 
             //-----------------------------------------------------------------
             // 0. Start turret wheel early so it’s already spinning when you shoot
@@ -161,8 +160,24 @@ public class BlueLeftTimeAuto extends LinearOpMode {
             // }
 
             turret.turretOff();    // turn off flywheel at end
-        }
+            */
+            driveBackward(0.3, 1900);
+            scoreArtifacts();
+            /*driveBackward(0.4, 500);
+            turnLeft(0.5, 400);
+            driveForward(0.5, 400);
+            intakeArtifacts();
+            driveForward(0.5, 1900);
+            sleep(300);
 
+            driveBackward(0.5, 1350);
+            turnRight(0.5, 400);
+            stopIntake();
+            driveForward(0.5, 400);
+            scoreArtifacts();*/
+
+            transfer.resetAllFlickers();
+        }
     }
         // ========== DRIVE METHODS ==========
 
@@ -213,32 +228,32 @@ public class BlueLeftTimeAuto extends LinearOpMode {
 
     // ========== GAME ELEMENT METHODS ==========
 
-    private void intakeArtifacts(long milliseconds) {
+    private void intakeArtifacts() {
         // Run intake motors
         intake.frontIntakeMotor.setPower(1.0);
-        intake.backIntakeMotor.setPower(1.0);
-        sleep(milliseconds);
-        intake.frontIntakeMotor.setPower(0);
-        intake.backIntakeMotor.setPower(0);
-        sleep(200);
+    }
 
-        // Index the artifacts
-        for (int i = 1; i <= 3; i++) {
-            transfer.detectArtifactColor(i);
-        }
+    private void stopIntake() {
+
+        intake.frontIntakeMotor.setPower(0);
+
     }
 
     private void scoreArtifacts() {
         // Spin up flywheels
-        turret.setTurretPower(0.7);
+        turret.setTurretPower(-0.8);
         sleep(1000); // Wait for flywheels to spin up
+        int slotnum = 0;
 
         // Flick artifacts one by one
         for (int slot = 1; slot <= 3; slot++) {
-            transfer.setTransferPos(slot, true); // Flick up
-            sleep(300); // Wait for artifact to shoot
-            transfer.setTransferPos(slot, false); // Flick down
-            sleep(200); // Small delay between shots
+            if (slot == 1) {slotnum = 2;}
+            if (slot == 2) {slotnum = 1;}
+            if (slot == 3) {slotnum = 3;}
+            transfer.setTransferPos(slotnum, true); // Flick up
+            sleep(1200); // Wait for artifact to shoot
+            transfer.setTransferPos(slotnum, false); // Flick down
+            sleep(700); // Small delay between shots
         }
 
         // Stop flywheels

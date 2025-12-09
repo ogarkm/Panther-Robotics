@@ -24,6 +24,7 @@ public class Turret {
         IDLE,
         EXTAKE,
         TRACKING,
+        INTAKING,
         MANUAL
     }
     private TurretState currentState = TurretState.IDLE;
@@ -68,6 +69,9 @@ public class Turret {
             case EXTAKE:
                 hardware.setTurretPower(Constants.TurretConstants.EXTAKE_POWER);
                 break;
+            case INTAKING:
+                hardware.setTurretPower(Constants.TurretConstants.INTAKE_POWER);
+                break;
             case TRACKING:
                 // Tracking happens in update()
                 break;
@@ -83,9 +87,10 @@ public class Turret {
 
     // Call this every loop in your main TeleOp
     public void update() {
-        if (currentState == TurretState.TRACKING) {
-            trackAprilTag();
-        }
+    }
+
+    public void setTurretPowerServo(float input) {
+        hardware.setTurretRotationPower(input);
     }
 
     // Manual rotation control (for testing or teleop override)

@@ -179,6 +179,12 @@ public class hwMap {
             }
         }
 
+        public void resetAllFlickers() {
+            for (int i = 1; i <= 3; i++) {
+                setTransferPos(i, false);
+            }
+        }
+
         public double getServoPos(int input) {
             return lifts[input].getPosition();
         }

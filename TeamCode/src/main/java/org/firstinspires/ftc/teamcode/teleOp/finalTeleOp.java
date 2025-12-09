@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TransferSys;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
 // TODO - SET THE ALLIANCE SIDE
-@TeleOp(name="FinalTeleOp", group="FINAL")
+@TeleOp(name = "FinalTeleOp", group = "FINAL")
 public class finalTeleOp extends LinearOpMode {
     private int alliance;
 
@@ -26,6 +26,8 @@ public class finalTeleOp extends LinearOpMode {
     private boolean wasGamepad1StartPressed = false;
     private boolean wasGamepad2StartPressed = false;
     private boolean wasGamepad2yPressed = false;
+    private boolean wasGamepad2bPressed = false;
+    private boolean wasGamepad1xPressed = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -42,126 +44,141 @@ public class finalTeleOp extends LinearOpMode {
         waitForStart();
         stateMachine.setRobotState(RobotState.TELEOP);
         stateMachine.getDriveTrain().setDriveState(DriveTrain.DriveState.NORMAL);
+        stateMachine.getTurret().setLaunchPower(Constants.TurretConstants.TURRET_POWER_MAX);
+        stateMachine.getTransfer().resetFlickers();
 
         while (opModeIsActive()) {
             // Read current button states once per loop
-                        boolean isGamepad2aPressed = gamepad2.a;
-                        boolean isGamepad2xPressed = gamepad2.x;
-                        boolean isGamepad1StartPressed = gamepad1.start;
-                        boolean isGamepad2StartPressed = gamepad2.start;
-                        boolean isGamepad2yPressed = gamepad2.y;
-            
-                        double y = -gamepad1.left_stick_y;
-                        double x = gamepad1.left_stick_x;
-                        double rx = gamepad1.right_stick_x;
-            
-                        stateMachine.getDriveTrain().teleopDrive(x, y, rx);
-            
-                        if (gamepad1.dpad_up) {
-                            stateMachine.getDriveTrain().setDriveState(DriveTrain.DriveState.TURBO);
-                        } else if (gamepad1.dpad_left) {
-                            stateMachine.getDriveTrain().setDriveState(DriveTrain.DriveState.NORMAL);
-                        } else if (gamepad1.dpad_down) {
-                            stateMachine.getDriveTrain().setDriveState(DriveTrain.DriveState.PRECISION);
-                        }
-            
-            
-                        if (gamepad1.right_trigger > 0.1) {
-                            stateMachine.setGameState(GameState.INTAKING);
-                        } else if (gamepad1.left_trigger > 0.1) {
-                            stateMachine.setGameState(GameState.EXTAKING);
-                        } else {
-                            // Only revert to IDLE if the current state was one of the trigger states.
-                            // This prevents overriding other states like SCORING.
-                            if (stateMachine.getCurrentGameState() == GameState.INTAKING || stateMachine.getCurrentGameState() == GameState.EXTAKING) {
-                                stateMachine.setGameState(GameState.IDLE);
-                            }
-                        }
-            
-                        // Scoring state toggle (debounced)
-                        if (isGamepad2aPressed && !wasGamepad2aPressed) {
-                            if (stateMachine.getCurrentGameState() != GameState.SCORING) {
-                                stateMachine.setGameState(GameState.SCORING);
-                            } else {
-                                stateMachine.setGameState(GameState.IDLE);
-                            }
-                        }
-            
-                        // Launcher toggle (debounced)
-                        if (isGamepad2xPressed && !wasGamepad2xPressed) {
-                            launching = !launching;
-                            if (launching) {
-                                stateMachine.getTurret().setTurretState(Turret.TurretState.LAUNCH);
-                            } else {
-                                stateMachine.getTurret().setTurretState(Turret.TurretState.IDLE);
-                            }
-                        }
+            boolean isGamepad2aPressed = gamepad2.a;
+            boolean isGamepad2xPressed = gamepad2.x;
+            boolean isGamepad1StartPressed = gamepad1.start;
+            boolean isGamepad2StartPressed = gamepad2.start;
+            boolean isGamepad2yPressed = gamepad2.y;
+            boolean isGamepad2bPressed = gamepad2.b;
+            boolean isGamepad1xPressed = gamepad1.x; 
 
-                        // Manual flicker control
-                        if (isGamepad2yPressed && !wasGamepad2yPressed) {
-                            if (stateMachine.getTransfer().getTransferState() != TransferSys.TransferState.MANUAL_FLICK) {
-                                stateMachine.getTransfer().setTransferState(TransferSys.TransferState.MANUAL_FLICK);
-                            }
-                            stateMachine.getTransfer().manualFlick();
-                        }
-            
-            
-                        if (gamepad2.dpad_up) {
-                            stateMachine.getTurret().setLaunchPower(Constants.TurretConstants.TURRET_POWER_MAX);
-                        } else if (gamepad2.dpad_left) {
-                            stateMachine.getTurret().setLaunchPower(Constants.TurretConstants.TURRET_POWER_MID);
-                        } else if (gamepad2.dpad_down) {
-                            stateMachine.getTurret().setLaunchPower(Constants.TurretConstants.TURRET_POWER_LOW);
-                        }
-            
-            
-            
-                        if (gamepad1.back) {
-                            stateMachine.emergencyStop();
-                        }
-                        
-                        // Alliance toggle (debounced)
-                        if (isGamepad1StartPressed && !wasGamepad1StartPressed) {
-                            alliance = (alliance == 1) ? 2 : 1;
-                            stateMachine.getTurret().setAlliance(alliance);
-                        }
-            
-                        // Turret Tracking ON (debounced - one-shot)
-                        if (isGamepad2StartPressed && !wasGamepad2StartPressed) {
-                            tracking = !tracking;
-                            if (tracking) {
-                                stateMachine.getTurret().setTurretState(Turret.TurretState.TRACKING);
-                            }
-                            else {
-                                stateMachine.getTurret().setTurretState(Turret.TurretState.IDLE);
-                            }
-                        }
-            
-                        if (gamepad2.right_bumper) {
-                            stateMachine.getTurret().setHoodPos(Constants.TurretConstants.HOOD_POS_CLOSE); // Close shot
-                        } else if (gamepad2.left_bumper) {
-                            stateMachine.getTurret().setHoodPos(Constants.TurretConstants.HOOD_POS_FAR); // Far shot
-                        }
-            
-                        stateMachine.update();
-            
-                        // Telemetry
-                        telemetry.addData("Robot State", stateMachine.getCurrentRobotState());
-                        telemetry.addData("Game State", stateMachine.getCurrentGameState());
-                        telemetry.addData("Drive State", stateMachine.getDriveTrain().getDriveState());
-                        telemetry.addData("Transfer State", stateMachine.getTransfer().getTransferState());
-                        telemetry.addData("Flick Plan", stateMachine.getTransfer().buildFlickPlan().toString());
-                        telemetry.addData("Alliance",  alliance == 1 ? "Blue" : "Red");
-                        telemetry.addData("Turret State", stateMachine.getTurret().getTurretState());
-                        telemetry.update();
-            
-                        wasGamepad2aPressed = isGamepad2aPressed;
-                        wasGamepad2xPressed = isGamepad2xPressed;
-                        wasGamepad1StartPressed = isGamepad1StartPressed;
-                        wasGamepad2StartPressed = isGamepad2StartPressed;
-                        wasGamepad2yPressed = isGamepad2yPressed;
-                    }
-            
-                    stateMachine.setRobotState(RobotState.ESTOP);
+            double y = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x;
+            double rx = gamepad1.right_stick_x;
+
+            stateMachine.getDriveTrain().teleopDrive(x, y, rx);
+
+            if (gamepad1.dpad_up) {
+                stateMachine.getDriveTrain().setDriveState(DriveTrain.DriveState.TURBO);
+            } else if (gamepad1.dpad_left) {
+                stateMachine.getDriveTrain().setDriveState(DriveTrain.DriveState.NORMAL);
+            } else if (gamepad1.dpad_down) {
+                stateMachine.getDriveTrain().setDriveState(DriveTrain.DriveState.PRECISION);
+            }
+
+            if (gamepad1.right_trigger > 0.1) {
+                stateMachine.setGameState(GameState.INTAKING);
+            } else if (gamepad1.left_trigger > 0.1) {
+                stateMachine.setGameState(GameState.EXTAKING);
+            } else {
+                // Only revert to IDLE if the current state was one of the trigger states.
+                // This prevents overriding other states like SCORING.
+                if (stateMachine.getCurrentGameState() == GameState.INTAKING
+                        || stateMachine.getCurrentGameState() == GameState.EXTAKING) {
+                    stateMachine.setGameState(GameState.IDLE);
                 }
             }
+
+            // Scoring state toggle (debounced)
+            // if (isGamepad2aPressed && !wasGamepad2aPressed) {
+            // if (stateMachine.getCurrentGameState() != GameState.SCORING) {
+            // stateMachine.setGameState(GameState.SCORING);
+            // } else {
+            // stateMachine.setGameState(GameState.IDLE);
+            // }
+            // }
+
+            // Launcher toggle (debounced)
+            if (isGamepad2yPressed && !wasGamepad2yPressed) {
+                launching = !launching;
+                if (launching) {
+                    stateMachine.getTurret().setTurretState(Turret.TurretState.LAUNCH);
+                } else {
+                    stateMachine.getTurret().setTurretState(Turret.TurretState.IDLE);
+                }
+            }
+
+            if (isGamepad1xPressed && !wasGamepad1xPressed) {
+                stateMachine.getTurret().setTurretState(Turret.TurretState.INTAKING);
+            }
+
+            // Manual flicker control
+
+
+
+            if (isGamepad2aPressed && !wasGamepad2aPressed) {
+                stateMachine.getTransfer().flickServo(2); // Flick the first slot as an example
+                sleep(500);
+                stateMachine.getTransfer().DownServo(2);
+            }
+            if (isGamepad2bPressed && !wasGamepad2bPressed) {
+                stateMachine.getTransfer().flickServo(1); // Flick the first slot as an example
+                sleep(500);
+                stateMachine.getTransfer().DownServo(1);
+            }
+            if (isGamepad2xPressed && !wasGamepad2xPressed) {
+                stateMachine.getTransfer().flickServo(3); // Flick the first slot as an example
+                sleep(600);
+                stateMachine.getTransfer().DownServo(3);
+            }
+
+            if (gamepad2.dpad_up) {
+                stateMachine.getTurret().setLaunchPower(Constants.TurretConstants.TURRET_POWER_MAX);
+            } else if (gamepad2.dpad_left) {
+                stateMachine.getTurret().setLaunchPower(Constants.TurretConstants.TURRET_POWER_MID);
+            } else if (gamepad2.dpad_down) {
+                stateMachine.getTurret().setLaunchPower(Constants.TurretConstants.TURRET_POWER_LOW);
+            }
+
+            if (gamepad1.back) {
+                stateMachine.emergencyStop();
+            }
+
+            // Alliance toggle (debounced)
+            if (isGamepad1StartPressed && !wasGamepad1StartPressed) {
+                alliance = (alliance == 1) ? 2 : 1;
+                stateMachine.getTurret().setAlliance(alliance);
+            }
+
+            // Turret Tracking ON (debounced - one-shot)
+            if (isGamepad2StartPressed && !wasGamepad2StartPressed) {
+                stateMachine.getTransfer().resetFlickers();
+            }
+
+            if (gamepad2.right_bumper) {
+                stateMachine.getTurret().setHoodPos(Constants.TurretConstants.HOOD_POS_CLOSE); // Close shot
+            } else if (gamepad2.left_bumper) {
+                stateMachine.getTurret().setHoodPos(Constants.TurretConstants.HOOD_POS_FAR); // Far shot
+            }
+
+            stateMachine.getTurret().setTurretPowerServo(gamepad2.right_stick_x);
+
+            stateMachine.update();
+
+            // Telemetry
+            telemetry.addData("Robot State", stateMachine.getCurrentRobotState());
+            telemetry.addData("Game State", stateMachine.getCurrentGameState());
+            telemetry.addData("Drive State", stateMachine.getDriveTrain().getDriveState());
+            telemetry.addData("Transfer State", stateMachine.getTransfer().getTransferState());
+            telemetry.addData("Flick Plan", stateMachine.getTransfer().buildFlickPlan().toString());
+            telemetry.addData("Alliance", alliance == 1 ? "Blue" : "Red");
+            telemetry.addData("Turret State", stateMachine.getTurret().getTurretState());
+            telemetry.update();
+
+            wasGamepad2aPressed = isGamepad2aPressed;
+            wasGamepad2xPressed = isGamepad2xPressed;
+            wasGamepad1StartPressed = isGamepad1StartPressed;
+            wasGamepad2StartPressed = isGamepad2StartPressed;
+            wasGamepad2yPressed = isGamepad2yPressed;
+            wasGamepad2bPressed = isGamepad2bPressed;
+            wasGamepad1xPressed = isGamepad1xPressed;
+        }
+
+        stateMachine.setRobotState(RobotState.ESTOP);
+    }
+}

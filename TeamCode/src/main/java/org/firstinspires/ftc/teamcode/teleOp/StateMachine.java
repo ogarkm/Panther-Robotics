@@ -92,7 +92,7 @@ public class StateMachine {
                 m_driveTrain.setDriveState(DriveTrain.DriveState.PRECISION);
                 m_intake.setIntakeState(Intake.IntakeState.IDLE);
                 m_transfer.setTransferState(TransferSys.TransferState.FLICKING);
-                m_turret.setTurretState(Turret.TurretState.TRACKING);
+                //m_turret.setTurretState(Turret.TurretState.TRACKING);
                 break;
             case LIFTING:
                 m_driveTrain.setDriveState(DriveTrain.DriveState.STOP);

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TransferSys {
+public class TransferSys{
     private final hwMap.TransferHwMap hardware;
     private final int[] artifactColors = {0, 0, 0};
     private int[] motif = {2, 1, 1};
@@ -100,6 +100,20 @@ public class TransferSys {
 
     private void dropCurrentItem(int slot) {
         hardware.setTransferPos(slot, false); // DOWN
+    }
+
+    public void flickServo(int slot) {
+        hardware.setTransferPos(slot, true); // UP
+    }
+
+    public void DownServo(int slot) {
+        hardware.setTransferPos(slot, false); // DOWN
+    }
+
+    public void resetFlickers() {
+        DownServo(1);
+        DownServo(2);
+        DownServo(3);
     }
 
     // --- Helpers ---
